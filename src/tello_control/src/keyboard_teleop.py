@@ -110,10 +110,13 @@ class TelloKeyboardTeleop(Node):
                 self.get_logger().info("Battery: " + str(self.battery))
             elif key == ord('p'):
                 self.get_logger().info("Status: " + str(self.status))
+            elif key == ord('i'):
+                self.get_logger().info("image_raw: " + str(self.frame))
+                cv2.imwrite( "/root/tello_ros_ws/src/tello_ros2_packages/frame.png", self.frame)
             elif key == 27: # ESC
-                self.get_logger().info("ESC - exiting")
-                cv2.destroyAllWindows()
-                exit(0)
+               self.get_logger().info("ESC - exiting")
+               cv2.destroyAllWindows()
+               exit(0)
             else:
                 self.manual_control(key)
 

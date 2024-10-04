@@ -39,7 +39,7 @@ class TelloNode():
         self.node.declare_parameter('camera_info_file', '')
         self.node.declare_parameter('network_interface', None)
         self.node.declare_parameter('video_foward_port', 11112)
-        self.node.declare_parameter("stream_on", False)
+        self.node.declare_parameter("stream_on", True)
 
         # Get parameters
         self.connect_timeout = float(self.node.get_parameter('connect_timeout').value)
