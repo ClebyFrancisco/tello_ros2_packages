@@ -781,20 +781,28 @@ class Tello:
         return address
 
     def cv2_video_capture(self):
-        """Get frame received in udp port with open cv.
-        """
-        while True:
-            cap = cv2.VideoCapture(self.get_foward_udp_video_address())
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if not ret:
-                    Tello.LOGGER.error("Image not received, trying again in five seconds. Please check if the drone is connected")
-                    time.sleep(5)
-                    continue
-                self.cv2_frame = frame
-
-            cap.release()
-            cv2.destroyAllWindows()
-            Tello.LOGGER.error("OpenCV lost connection to drone")
-            time.sleep(1)
+        """Get frame received in udp port with open cv."""
+        cap = cv2.VideoCapture(self.get_foward_udp_video_address())
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Define o buffer com 1 frame para reduzir o acúmulo
         
+        while cap.isOpened():
+            ret, frame = cap.read()
+
+            if not ret:
+                Tello.LOGGER.error("Image not received, trying again in one second. Please check if the drone is connected")
+                time.sleep(1)  # Tempo de espera reduzido
+                continue
+
+            # Armazena o último frame lido
+            self.cv2_frame = frame
+
+            cv2.imshow('frame', frame)
+            
+            # Libera o buffer e força a leitura do frame mais recente
+            cap.grab()
+            time.sleep(0.02)  # Tempo curto para aliviar o processamento
+
+        cap.release()
+        cv2.destroyAllWindows()
+        Tello.LOGGER.error("OpenCV lost connection to drone")
+        time.sleep(1)
